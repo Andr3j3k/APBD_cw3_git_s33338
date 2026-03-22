@@ -130,4 +130,31 @@ public class RentalService
         Console.WriteLine("Sprzęt został zwrócony.");
         return true;
     }
+
+    public List<Rental> GetActiveRentalsByUser(int userId)
+    {
+        List<Rental> activeRentals = new List<Rental>();
+
+        foreach (Rental rental in _rentals)
+        {
+            if (rental.User.Id == userId && rental.ReturnDate == null)
+            {
+                activeRentals.Add(rental);
+            }
+        }
+        return activeRentals;
+    }
+
+    public List<Rental> GetOverDueRentals()
+    {
+        List<Rental> overdueRentals = new List<Rental>();
+        foreach (Rental rental in _rentals)
+        {
+            if (rental.ReturnDate == null && rental.DueDate < DateTime.Now)
+            {
+                overdueRentals.Add(rental);
+            }
+        }
+        return overdueRentals;
+    }
 }
