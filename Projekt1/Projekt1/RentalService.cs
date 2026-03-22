@@ -88,4 +88,46 @@ public class RentalService
         Console.WriteLine("Sprzęt został poprawnie wypożyczony.");
         return true;
     }
+
+    public bool ReturnEquipment(int rentalId, DateTime returnDate)
+    {
+        Rental? rentalToReturn = null;
+
+        foreach (Rental rental in _rentals)
+        {
+            if (rental.Id == rentalId)
+            {
+                rentalToReturn = rental;
+                break;
+            }
+        }
+
+        if (rentalToReturn == null)
+        {
+            Console.WriteLine("Nie znaleziono wypożyczenia");
+            return false;
+        }
+
+        if (rentalToReturn.ReturnDate != null)
+        {
+            Console.WriteLine("Ten sprzęt został już wcześniej zwrócony.");
+            return false;
+        }
+
+        rentalToReturn.ReturnDate = returnDate;
+
+        if (returnDate > rentalToReturn.DueDate)
+        {
+            int lateDays=(returnDate-rentalToReturn.DueDate).Days;
+            rentalToReturn.Penalty=lateDays*10m;
+        }
+        else
+        {
+            rentalToReturn.Penalty = 0;
+        }
+
+        rentalToReturn.Equipment.Status = EquipmentStatus.Available;
+        Console.WriteLine("Sprzęt został zwrócony.");
+        return true;
+    }
 }
